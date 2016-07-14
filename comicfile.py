@@ -44,5 +44,10 @@ class ComicFile():
         """Append the passed value to the named attribute."""
         return
 
-comic = ComicFile()
-print(comic.file_type)
+    def page_count(self):
+        """Return the number of pages in the file."""
+        return
+
+if __name__ == '__main__':
+    comic = ComicFile()
+    print(comic.file_type)

@@ -1,0 +1,3 @@
+import comicfile
+
+print("test")
