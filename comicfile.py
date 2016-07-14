@@ -17,7 +17,6 @@ class ComicFile():
 
     def __init__(self, file=None):
         """Initialization for the class."""
-        self.file_type = self.FileType.none
         self.file = file
 
     def __str__(self):
@@ -57,6 +56,15 @@ class ComicFile():
         members = [item for item in members if not item.endswith('/')]
         return len(members)
 
+    @property
+    def file_type(self):
+        if self.file == None:
+            return self.FileType.none
+        elif self.file.endswith('.zip') or self.file.endswith('.cbz'):
+            return self.FileType.zip
+        else:
+            return None
+
 if __name__ == '__main__':
     comic = ComicFile()
 
@@ -68,3 +76,4 @@ if __name__ == '__main__':
     comic.file = targ_file
 
     print(comic.page_count())
+    print(comic.file_type)
