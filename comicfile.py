@@ -1,5 +1,7 @@
 from zipfile import ZipFile
 from enum import Enum
+import os
+from os import path
 
 class ComicFile():
     """An object representing a comic book archive file"""
@@ -32,22 +34,37 @@ class ComicFile():
         """
         return
 
-    def delete_page(self, page):
+    def delete_page(self, page, in_place=False):
         """Remove the indicated page from the archive and save it."""
         return
 
-    def set_attribute(self, name, value):
+    def set_attribute(self, name, value, in_place=False):
         """Set the comic book archive attribute to the passed value."""
         return
 
-    def append_attribute(self, name, value):
+    def append_attribute(self, name, value, in_place=False):
         """Append the passed value to the named attribute."""
         return
 
     def page_count(self):
         """Return the number of pages in the file."""
-        return
+        if self.file == None:
+            return -1
+
+        zip = ZipFile(self.file)
+        members = zip.namelist()
+        # Remove folder members if there are any.
+        members = [item for item in members if not item.endswith('/')]
+        return len(members)
 
 if __name__ == '__main__':
     comic = ComicFile()
-    print(comic.file_type)
+
+    script_path = path.realpath(__file__)
+    parent_dir = path.abspath(path.join(script_path, os.pardir))
+    targ_dir = path.join(parent_dir, 'files')
+    targ_file = path.join(targ_dir, '100 Bullets - Brian Azzarello.cbz' )
+
+    comic.file = targ_file
+
+    print(comic.page_count())
