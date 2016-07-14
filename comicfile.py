@@ -14,34 +14,33 @@ class ComicFile():
         ace = 4
         tar = 5
 
-
-    def __init__(self, file=None):
+    def __init__(self, file:str=None):
         """Initialization for the class."""
         self.file = file
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a sring representation of the object."""
         return 'string'
 
-    def open(self, file):
+    def open(self, file:str):
         """Set the file to the passed parameter"""
         self.file = file
 
-    def save(self, file=None):
+    def save(self, file:str=None):
         """
         Save the file to the destination or a default location if it isn't provided.
         """
         return
 
-    def delete_page(self, page, in_place=False):
+    def delete_page(self, page:int, in_place:bool=False):
         """Remove the indicated page from the archive and save it."""
         return
 
-    def set_attribute(self, name, value, in_place=False):
+    def set_attribute(self, name:str, value:str, in_place:bool=False):
         """Set the comic book archive attribute to the passed value."""
         return
 
-    def append_attribute(self, name, value, in_place=False):
+    def append_attribute(self, name:str, value:str, in_place:bool=False):
         """Append the passed value to the named attribute."""
         return
 
@@ -50,18 +49,26 @@ class ComicFile():
         if self.file == None:
             return -1
 
-        zip = ZipFile(self.file)
-        members = zip.namelist()
-        # Remove folder members if there are any.
-        members = [item for item in members if not item.endswith('/')]
-        return len(members)
+        with ZipFile(self.file) as zip:
+            members = zip.namelist()
+            # Remove folder members if there are any.
+            pruned = [item for item in members if not item.endswith('/')]
+            return len(pruned)
 
     @property
-    def file_type(self):
+    def file_type(self) -> FileType:
         if self.file == None:
             return self.FileType.none
-        elif self.file.endswith('.zip') or self.file.endswith('.cbz'):
+        elif self.file.endswith(('.zip', '.cbz')):
             return self.FileType.zip
+        elif self.file.endswith(('.rar', '.cbr')):
+            return self.FileType.rar
+        elif self.file.endswith(('.7z', '.cb7')):
+            return self.FileType.sevenz
+        elif self.file.endswith(('.ace', '.cba')):
+            return self.FileType.ace
+        elif self.file.endswith(('.tar', '.cbt')):
+            return self.FileType.tar
         else:
             return None
 
