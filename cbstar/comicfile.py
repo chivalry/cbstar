@@ -32,7 +32,7 @@ class ComicFile():
         """
         return
 
-    def delete_page(self, page:int, in_place:bool=False):
+    def delete_page(self, page:int=1, in_place:bool=False):
         """Remove the indicated page from the archive and save it."""
         return
 
