@@ -14,6 +14,10 @@ class ComicFile():
         ace = 4
         tar = 5
 
+    class ComicFileError(Exception): pass
+    class FileNotFoundError(OSError): pass
+    class FileNoneError(TypeError): pass
+
     def __init__(self, file:str=None):
         """Initialization for the class."""
         self.file = file
@@ -47,7 +51,10 @@ class ComicFile():
     def page_count(self):
         """Return the number of pages in the file."""
         if self.file == None:
-            return -1
+            raise ComicFile.FileNoneError()
+
+        if not os.path.isfile(self.file):
+            raise ComicFile.FileNotFoundError()
 
         with ZipFile(self.file) as zip:
             members = zip.namelist()

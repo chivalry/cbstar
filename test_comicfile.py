@@ -1,7 +1,4 @@
 import unittest
+from unittest.mock import Mock
 
-from comicfile import ComicFile
-
-class ComicFileTests(unittest.TestCase):
-    def test_file_type(self):
-        pass
+from cbstar import ComicFile
