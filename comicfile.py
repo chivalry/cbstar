@@ -58,9 +58,14 @@ class ComicFile():
 
         with ZipFile(self.file) as zip:
             members = zip.namelist()
-            # Remove folder members if there are any.
-            pruned = [item for item in members if not item.endswith('/')]
-            return len(pruned)
+            pruned = self.prune_dirs(members)
+            length = len(pruned)
+            return length
+
+    def prune_dirs(self, members:list) -> list:
+        """Remove folder members if there are any."""
+        pruned = [item for item in members if not item.endswith('/')]
+        return pruned
 
     @property
     def file_type(self) -> FileType:
