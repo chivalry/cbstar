@@ -34,19 +34,19 @@ class ComicFile():
         """
         Save the file to the destination or a default location if it isn't provided.
         """
-        return
+        pass
 
     def delete_page(self, page:int=1, in_place:bool=False):
         """Remove the indicated page from the archive and save it."""
-        return
+        pass
 
     def set_attribute(self, name:str, value:str, in_place:bool=False):
         """Set the comic book archive attribute to the passed value."""
-        return
+        pass
 
     def append_attribute(self, name:str, value:str, in_place:bool=False):
         """Append the passed value to the named attribute."""
-        return
+        pass
 
     def page_count(self):
         """Return the number of pages in the file."""

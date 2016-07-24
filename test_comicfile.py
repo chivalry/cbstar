@@ -1,15 +1,12 @@
-import unittest
-import unittest.mock
+from unittest import TestCase
+from unittest.mock import patch
 
-import os
-import zipfile
+from comicfile import ComicFile
 
-import comicfile
-
-class TestPruneDirs(unittest.TestCase):
+class TestPruneDirs(TestCase):
 
     def setUp(self):
-        self.comic_file = comicfile.ComicFile()
+        self.comic_file = ComicFile()
         self.dirs = ['/path/to/dir/', 'relative/path/to/dir/']
         self.files = ['/path/to/file', 'relative/path/to/file']
 
@@ -32,21 +29,21 @@ class TestPruneDirs(unittest.TestCase):
     def assert_empty(self, list:list):
         self.assertEqual([], list)
 
-class TestPageCount(unittest.TestCase):
+class TestPageCount(TestCase):
 
     def setUp(self):
-        self.comic_file = comicfile.ComicFile()
+        self.comic_file = ComicFile()
 
     def test_page_count_raises_error_when_file_not_set(self):
-        with self.assertRaises(comicfile.ComicFile.FileNoneError):
+        with self.assertRaises(ComicFile.FileNoneError):
             self.comic_file.page_count()
 
     def test_page_count_raises_error_when_file_missing(self):
-        with self.assertRaises(comicfile.ComicFile.FileNotFoundError):
+        with self.assertRaises(ComicFile.FileNotFoundError):
             self.comic_file.file = '/file/does/not/exist.zip'
             self.comic_file.page_count()
         
-    @unittest.mock.patch('comicfile.ZipFile')
+    @patch('comicfile.ZipFile')
     def test_page_count_returns_correct_count(self, mock_zip_file):
         # Store as tuples to use as dictionary keys.
         members_dict = {('dir/', 'dir/file1', 'dir/file2'):2,
