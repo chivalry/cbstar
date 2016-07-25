@@ -29,22 +29,27 @@ class ComicFile():
         """Return a sring representation of the object."""
         return os.path.basename(self.file_path) if self.file_path != None else "empty"
 
-    def page_count(self):
-        """Return the number of pages in the file."""
+    def page_names(self):
+        """Returns a list of the pages in the archive."""
         if self.file_path == None:
             raise ComicFile.FileNoneError()
-
         if not os.path.isfile(self.file_path):
             raise ComicFile.FileNotFoundError()
 
         with ZipFile(self.file_path) as zip:
             members = zip.namelist()
             pruned = [item for item in members if not item.endswith('/')]
-            length = len(pruned)
-            return length
+            return pruned
+
+    def page_count(self):
+        """Return the number of pages in the file."""
+        return len(self.page_names())
 
     def delete_page(self, page:int=1):
-        """Remove the indicated page from the archive and save it."""
+        """
+        Remove the indicated page from the archive and save it. Page order is
+        determined by case-insensitive sorting order.
+        """
         with TemporaryDirectory() as tmpdir_path:
             pass
 
