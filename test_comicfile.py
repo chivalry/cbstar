@@ -18,9 +18,6 @@ class TestComicFile(TestCase):
     }
 
 
-    def setUp(self):
-        self.comic_file = ComicFile()
-
     @patch('comicfile.ZipFile')
     def test_page_names(self, mock_zip_file):
         """
@@ -28,12 +25,12 @@ class TestComicFile(TestCase):
         `ZipFile.namelist` with members having trailing slashes removed.
         """
 
-        self.prevent_file_none_error()
+        comic_file = ComicFile(__file__)
 
         for members, pages in self.members_dict.items():
             mock_zip_file.return_value.__enter__.return_value.namelist.return_value \
                     = list(members)
-            self.assertEqual(sorted(pages), sorted(self.comic_file.page_names()))
+            self.assertEqual(sorted(pages), sorted(comic_file.page_names()))
 
 
     @patch('comicfile.ZipFile')
@@ -44,12 +41,12 @@ class TestComicFile(TestCase):
         end in a slash.
         """
 
-        self.prevent_file_none_error()
+        comic_file = ComicFile(__file__)
 
         for members, pages in self.members_dict.items():
             mock_zip_file.return_value.__enter__.return_value.namelist.return_value \
                     = list(members)
-            self.assertEqual(len(pages), self.comic_file.page_count())
+            self.assertEqual(len(pages), comic_file.page_count())
 
     def test_delete_page(self):
         """
@@ -67,21 +64,19 @@ class TestComicFile(TestCase):
                         tmp_file.write(file_name)
                         zip_file.write(tmp_file.name)
 
-            self.comic_file.file_path = zip_path
-            print(self.comic_file.file_path)
-            print(self.comic_file.save_path)
-            orig_count = self.comic_file.page_count()
-            orig_pages = self.comic_file.page_names()
+            comic_file = ComicFile(zip_path)
+            orig_count = comic_file.page_count()
+            orig_pages = comic_file.page_names()
 
-            self.comic_file.delete_page()
-            new_count = self.comic_file.page_count()
-            new_pages = self.comic_file.page_names()
+            comic_file.delete_page()
+            new_count = comic_file.page_count()
+            new_pages = comic_file.page_names()
             self.assertEqual(new_count, orig_count - 1)
             self.assertNotIn('01', new_pages)
 
-            self.comic_file.delete_page(5)
-            new_count = self.comic_file.page_count()
-            new_pages = self.comic_file.page_names()
+            comic_file.delete_page(5)
+            new_count = comic_file.page_count()
+            new_pages = comic_file.page_names()
             self.assertEqual(new_count, orig_count - 2)
             self.assertNotIn('06', new_pages)
 

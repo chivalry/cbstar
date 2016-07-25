@@ -19,10 +19,9 @@ class ComicFile():
 
     class ComicFileError(Exception): pass
     class FileNotFoundError(OSError): pass
-    class FileNoneError(TypeError): pass
     class PageOutOfRangeError(IndexError): pass
 
-    def __init__(self, file_path:str=None, save_path:str=None):
+    def __init__(self, file_path:str, save_path:str=None):
         """Initialization for the class."""
         self.file_path = file_path
         self.save_path = save_path or file_path
@@ -48,18 +47,8 @@ class ComicFile():
         ext = os.path.splitext(self.file_path)
         return file_types.get(ext, self.FileType.none)
 
-    @property
-    def save_path(self):
-        return self.file_path if self._save_path == None else self._save_path
-
-    @save_path.setter
-    def save_path(self, value):
-        self._save_path = value
-
     def page_names(self):
         """Returns a list of the pages in the archive."""
-        if self.file_path == None:
-            raise ComicFile.FileNoneError()
         if not os.path.isfile(self.file_path):
             raise ComicFile.FileNotFoundError()
 
