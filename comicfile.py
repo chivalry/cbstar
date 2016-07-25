@@ -24,7 +24,8 @@ class ComicFile():
 
     def __str__(self) -> str:
         """Return a sring representation of the object."""
-        return 'string'
+        return "Comic File: " + (os.path.basename(self.file) if self.file != None
+                else "empty")
 
     def open(self, file:str):
         """Set the file to the passed parameter"""
@@ -69,20 +70,18 @@ class ComicFile():
 
     @property
     def file_type(self) -> FileType:
-        if self.file == None:
-            return self.FileType.none
-        elif self.file.endswith(('.zip', '.cbz')):
-            return self.FileType.zip
-        elif self.file.endswith(('.rar', '.cbr')):
-            return self.FileType.rar
-        elif self.file.endswith(('.7z', '.cb7')):
-            return self.FileType.sevenz
-        elif self.file.endswith(('.ace', '.cba')):
-            return self.FileType.ace
-        elif self.file.endswith(('.tar', '.cbt')):
-            return self.FileType.tar
-        else:
-            return None
+        file_types = {'.zip': self.FileType.zip,
+                      '.cbz': self.FileType.zip,
+                      '.rar': self.FileType.rar,
+                      '.cbr': self.FileType.rar,
+                      '.7z' : self.FileType.sevenz,
+                      'cb7' : self.FileType.sevenz,
+                      'ace' : self.FileType.ace,
+                      'cba' : self.FileType.ace,
+                      'tar' : self.FileType.tar,
+                      'cbt' : self.FileType.tar,
+        }
+        return file_types.get(ext, self.FileType.none)
 
 if __name__ == '__main__':
     comic = ComicFile()
@@ -96,3 +95,5 @@ if __name__ == '__main__':
 
     print(comic.page_count())
     print(comic.file_type)
+    print(comic)
+    print(repr(comic))
