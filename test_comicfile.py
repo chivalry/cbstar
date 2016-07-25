@@ -40,7 +40,7 @@ class TestPageCount(TestCase):
 
     def test_page_count_raises_error_when_file_missing(self):
         with self.assertRaises(ComicFile.FileNotFoundError):
-            self.comic_file.file = '/file/does/not/exist.zip'
+            self.comic_file.file_path = '/file/does/not/exist.zip'
             self.comic_file.page_count()
         
     @patch('comicfile.ZipFile')
@@ -51,7 +51,7 @@ class TestPageCount(TestCase):
         }
         
         # Make the file point to something to prevent FileNoneError.
-        self.comic_file.file = __file__
+        self.comic_file.file_path = __file__
 
         for file_tuple, count in members_dict.items():
             mock_zip_file.return_value.__enter__.return_value.namelist.return_value \

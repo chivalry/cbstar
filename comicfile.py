@@ -17,47 +17,38 @@ class ComicFile():
     class ComicFileError(Exception): pass
     class FileNotFoundError(OSError): pass
     class FileNoneError(TypeError): pass
+    class PageOutOfRangeError(IndexError): pass
 
-    def __init__(self, file:str=None):
+    def __init__(self, file_path:str=None, save_path=None):
         """Initialization for the class."""
-        self.file = file
+        self.file_path = file_path
+        self.save_path = save_path
 
     def __str__(self) -> str:
         """Return a sring representation of the object."""
-        return "Comic File: " + (os.path.basename(self.file) if self.file != None
-                else "empty")
+        return os.path.basename(self.file_path) if self.file_path != None else "empty"
 
-    def open(self, file:str):
-        """Set the file to the passed parameter"""
-        self.file = file
-
-    def save(self, file:str=None):
-        """
-        Save the file to the destination or a default location if it isn't provided.
-        """
-        pass
-
-    def delete_page(self, page:int=1, in_place:bool=False):
+    def delete_page(self, page:int=1):
         """Remove the indicated page from the archive and save it."""
         pass
 
-    def set_attribute(self, name:str, value:str, in_place:bool=False):
+    def set_attribute(self, name:str, value:str):
         """Set the comic book archive attribute to the passed value."""
         pass
 
-    def append_attribute(self, name:str, value:str, in_place:bool=False):
+    def append_attribute(self, name:str, value:str):
         """Append the passed value to the named attribute."""
         pass
 
     def page_count(self):
         """Return the number of pages in the file."""
-        if self.file == None:
+        if self.file_path == None:
             raise ComicFile.FileNoneError()
 
-        if not os.path.isfile(self.file):
+        if not os.path.isfile(self.file_path):
             raise ComicFile.FileNotFoundError()
 
-        with ZipFile(self.file) as zip:
+        with ZipFile(self.file_path) as zip:
             members = zip.namelist()
             pruned = self.prune_dirs(members)
             length = len(pruned)
