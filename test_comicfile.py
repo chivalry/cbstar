@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest import skip
 from unittest.mock import patch
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
@@ -67,6 +68,8 @@ class TestComicFile(TestCase):
                         zip_file.write(tmp_file.name)
 
             self.comic_file.file_path = zip_path
+            print(self.comic_file.file_path)
+            print(self.comic_file.save_path)
             orig_count = self.comic_file.page_count()
             orig_pages = self.comic_file.page_names()
 

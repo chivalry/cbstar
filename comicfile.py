@@ -1,8 +1,10 @@
 from zipfile import ZipFile
+from zipfile import ZIP_DEFLATED
 from enum import Enum
 import os
 from os import path
 from tempfile import TemporaryDirectory
+import shutil
 
 class ComicFile():
     """An object representing a comic book archive file"""
@@ -20,14 +22,39 @@ class ComicFile():
     class FileNoneError(TypeError): pass
     class PageOutOfRangeError(IndexError): pass
 
-    def __init__(self, file_path:str=None, save_path=None):
+    def __init__(self, file_path:str=None, save_path:str=None):
         """Initialization for the class."""
         self.file_path = file_path
-        self.save_path = file_path if save_path == None else save_path
+        self.save_path = save_path or file_path
 
     def __str__(self) -> str:
         """Return a sring representation of the object."""
         return os.path.basename(self.file_path) if self.file_path != None else "empty"
+
+    @property
+    def file_type(self) -> FileType:
+        file_types = {'.zip': self.FileType.zip,
+                      '.cbz': self.FileType.zip,
+                      '.rar': self.FileType.rar,
+                      '.cbr': self.FileType.rar,
+                      '.7z' : self.FileType.sevenz,
+                      '.cb7': self.FileType.sevenz,
+                      '.ace': self.FileType.ace,
+                      '.cba': self.FileType.ace,
+                      '.tar': self.FileType.tar,
+                      '.cbt': self.FileType.tar,
+        }
+
+        ext = os.path.splitext(self.file_path)
+        return file_types.get(ext, self.FileType.none)
+
+    @property
+    def save_path(self):
+        return self.file_path if self._save_path == None else self._save_path
+
+    @save_path.setter
+    def save_path(self, value):
+        self._save_path = value
 
     def page_names(self):
         """Returns a list of the pages in the archive."""
@@ -50,8 +77,23 @@ class ComicFile():
         Remove the indicated page from the archive and save it. Page order is
         determined by case-insensitive sorting order.
         """
-        with TemporaryDirectory() as tmpdir_path:
-            pass
+
+        # Loop through pages, writing each one to a new zip archive except the
+        # page to delete, then write to the `save_path` location.
+        base_name = os.path.basename(self.file_path)
+        with ZipFile(self.file_path, 'r') as zip_in:
+            with TemporaryDirectory() as tmpdir_path:
+                tmp_zip_path = os.path.join(tmpdir_path, base_name)
+                with ZipFile(tmp_zip_path, 'w', ZIP_DEFLATED) as zip_out:
+                    i = 1
+                    for page in zip_in.infolist():
+                        buffer = zip_in.read(page.filename)
+                        if i != page:
+                            zip_out.writestr(page, buffer)
+                        i += 1
+        self.save_path = self.file_path if self.save_path == None else self.save_path
+        shutil.copy(tmp_zip_path, self.save_path)
+                        
 
     def set_attribute(self, name:str, value:str):
         """Set the comic book archive attribute to the passed value."""
@@ -60,23 +102,6 @@ class ComicFile():
     def append_attribute(self, name:str, value:str):
         """Append the passed value to the named attribute."""
         pass
-
-    @property
-    def file_type(self) -> FileType:
-        file_types = {'.zip': self.FileType.zip,
-                      '.cbz': self.FileType.zip,
-                      '.rar': self.FileType.rar,
-                      '.cbr': self.FileType.rar,
-                      '.7z' : self.FileType.sevenz,
-                      '.cb7': self.FileType.sevenz,
-                      '.ace': self.FileType.ace,
-                      '.cba': self.FileType.ace,
-                      '.tar': self.FileType.tar,
-                      '.cbt': self.FileType.tar,
-        }
-
-        ext = os.path.splitext(self.file_path)
-        return file_types.get(ext, self.FileType.none)
 
 if __name__ == '__main__':
     comic = ComicFile()
