@@ -1,3 +1,8 @@
+# Test files, temporary files and research
+files/
+research/
+tmp/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
