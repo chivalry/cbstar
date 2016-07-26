@@ -1,5 +1,6 @@
 from zipfile import ZipFile
 import os
+import sys
 import struct
 
 class ZipArchiver:
@@ -73,5 +74,14 @@ class ZipArchiver:
             return False
         else:
             return True
-
-
+    
+    def read(self, arch_file):
+        data = ''
+        with ZipFile(self.path, 'r') as zip_file:
+            try:
+                data = zip_file.read(arch_file)
+            except Exception as e:
+                print('bad zipfile {}: {} :: {}'.format(e, self.path, arch_file),
+                      file=sys.stderr)
+                raise IOError
+        return data
