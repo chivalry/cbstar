@@ -2,6 +2,7 @@ from zipfile import ZipFile
 import os
 import sys
 import struct
+import tempfile
 
 class ZipArchiver:
     """
@@ -85,3 +86,31 @@ class ZipArchiver:
                       file=sys.stderr)
                 raise IOError
         return data
+
+    def rebuild(self, exclude:list):
+        """
+        Zip helper function.
+
+        This recompresses the zip archive, without the files in the exclude list.
+        """
+
+        # Generate temp file.
+        fmp_fd, tmp_name = tempfile.mkstemp(dir=os.path.dirname(self.path))
+        os.close(tmp_fd)
+
+        zip_in = ZipFile(self.path, 'r')
+        zip_out = ZipFile(tmp_name, 'w')
+        for item in zip_in.infolist():
+            buffer = zip_in.read(item.filename)
+            if item.filename not in exclude:
+                zip_out.writestr(item, buffer)
+
+        # Preserve the old comment.
+        zip_out.comment = zip_in.comment
+
+        zip_out.close()
+        zip_in.close()
+
+        # Replace with the new file.
+        os.remove(self.path)
+        os.rename(tmp_name, self.path)
