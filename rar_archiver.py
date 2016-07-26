@@ -2,7 +2,7 @@ import os
 import platform
 from rarfile import RarFile
 from time import sleep
-from tempfile import TemporaryFile
+from tempfile import TemporaryFile, TemporaryFolder
 import subprocess
 
 class RarArchiver:
@@ -95,3 +95,21 @@ class RarArchiver:
                         return entries[0][1]
                     else:
                         raise IOError
+    
+    def write_member(self, member, data):
+        if not self.exe_path:
+            return False
+
+        try:
+            with TemporaryFile() as tmp_file:
+                tmp_file.write(data)
+                subprocess.call([self.exe_path,
+                                 'a', '-w' + curr_dir, '-c-', '-ep',
+                                 self.path, tmp_file],
+                                startupinfo=self.startupinfo,
+                                stdout=RarArchiver.devnull)
+                time.sleep(1) if platform.system() == 'Darwin'
+        except:
+            return False
+        else:
+            return True
