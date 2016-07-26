@@ -2,6 +2,8 @@ import os
 import platform
 from rarfile import RarFile
 from time import sleep
+from tempfile import TemporaryFile
+import subprocess
 
 class RarArchiver:
     """
@@ -39,3 +41,29 @@ class RarArchiver:
             else:
                 return rar_obj
         return e
+
+    def get_comment(self):
+        return self.get_rar_obj().comment
+
+    def set_comment(self, comment):
+        if not self.exe_path:
+            return False
+
+        try:
+            # Write comment to temp file.
+            with TemporaryFile() as tmp_file:
+                tmp_file.write(comment)
+
+                curr_dir = os.path.dirname(os.path.abspath(self.path))
+
+                # Use external program to write comment to Rar archive.
+                subprocess.call([self.exe_path,
+                                 'c', '-w' + curr_dir, '-c-', '-z-' + tmp_file,
+                                 self.path],
+                                startupinfo=self.startupinfo,
+                                stdout=RarArchiver.devnull)
+                time.sleep(1) if platform.system() == 'Darwin'
+        except:
+            return False
+        else:
+            return True
