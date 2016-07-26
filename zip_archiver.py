@@ -105,3 +105,11 @@ class ZipArchiver:
             os.remove(self.path)
             os.rename(temp_file, self.path)
             self.path = temp_file
+
+    def remove_member(self, member):
+        try:
+            self.rebuild([member])
+        except:
+            return False
+        else:
+            return True
