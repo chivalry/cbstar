@@ -67,3 +67,31 @@ class RarArchiver:
             return False
         else:
             return True
+
+    def read_member(self, member):
+        entries = []
+
+        rarc = self.get_rar_obj()
+        for tries in range(7):
+            try:
+                data = rarc.open(member).read()
+                entries = [(rarc.getinfo(member), data)]
+                if entries[0][0].file_size != len(entries[0][1]):
+                    msg = 'read_member(): [file is not expected size: ' +
+                          '{} vs {}] {}:{} attempt #{}'
+                    print(msg.format(entries[0][0].file_size,
+                                     len(entries[0][1],)
+                                     self.path,
+                                     member
+                                     tries),
+                          file=os.stderr)
+                    continue
+                except Exception as e:
+                    print('read_member(): [{}] {}:{} attempt #{}'.format(
+                          e, self.path, member, tries), file=os.stderr)
+                    time.sleep(1)
+                else:
+                    if len(entries) == 1:
+                        return entries[0][1]
+                    else:
+                        raise IOError
