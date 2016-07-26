@@ -2,7 +2,7 @@ from zipfile import ZipFile
 import os
 import sys
 import struct
-import tempfile
+from tempfile import TemporaryFile
 
 class ZipArchiver:
     """
