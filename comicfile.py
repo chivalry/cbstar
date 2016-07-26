@@ -75,13 +75,12 @@ class ComicFile():
                 tmp_zip_path = os.path.join(tmpdir_path, base_name)
                 with ZipFile(tmp_zip_path, 'w', ZIP_DEFLATED) as zip_out:
                     i = 1
-                    for page in zip_in.infolist():
-                        buffer = zip_in.read(page.filename)
+                    for member in zip_in.infolist():
+                        buffer = zip_in.read(member.filename)
                         if i != page:
-                            zip_out.writestr(page, buffer)
+                            zip_out.writestr(member, buffer)
                         i += 1
-        self.save_path = self.file_path if self.save_path == None else self.save_path
-        shutil.copy(tmp_zip_path, self.save_path)
+                shutil.copy(tmp_zip_path, self.save_path)
                         
 
     def set_attribute(self, name:str, value:str):
