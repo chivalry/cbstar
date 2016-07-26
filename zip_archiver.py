@@ -138,3 +138,22 @@ class ZipArchiver:
             print('bad zipfile {}: {} :: {}'.format(e, self.path, member),
                   file=sys.stderr)
             return []
+
+    def copy_from_archive(self, other):
+        """Replace the current zip with one copies from another archive."""
+        try:
+            with ZipFile(self.path, 'w') as zip_out:
+                for filename in other.get_member_filename_list():
+                    data = other.read_member(filename)
+                    if data is not None:
+                        zip_out.writestr(filename, data)
+
+            comment = other.comment()
+            if comment is not None:
+                return self.set_comment(comment)
+        except:
+            print('Error while copying to {}: {}'.format(self.path, e),
+                  file=sys.stderr)
+            return False
+        else:
+            return True
