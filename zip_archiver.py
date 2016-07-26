@@ -76,13 +76,13 @@ class ZipArchiver:
         else:
             return True
     
-    def read(self, arch_file):
+    def read_member(self, member):
         data = ''
         with ZipFile(self.path, 'r') as zip_file:
             try:
-                data = zip_file.read(arch_file)
+                data = zip_file.read(member)
             except Exception as e:
-                print('bad zipfile {}: {} :: {}'.format(e, self.path, arch_file),
+                print('bad zipfile {}: {} :: {}'.format(e, self.path, member),
                       file=sys.stderr)
                 raise IOError
         return data
@@ -104,7 +104,6 @@ class ZipArchiver:
                     zip_out.comment = zip_in.comment
             os.remove(self.path)
             os.rename(temp_file, self.path)
-            self.path = temp_file
 
     def remove_member(self, member):
         try:
@@ -113,3 +112,29 @@ class ZipArchiver:
             return False
         else:
             return True
+
+    def write_member(self, member, data):
+        """
+        At the moment, no other option but to rebuild the whole zip archive
+        without the indicated file. Very sucky, but maybe another solution
+        can be found.
+        """
+
+        try:
+            self.rebuild([member])
+
+            # Now add the member (back?) in.
+            with ZipFile(self.path, 'a', ZIP_DEFLATED) as zip_file:
+                zip_file.writestr(member, data)
+            return True
+        except:
+            return False
+
+    def get_member_filename_list(self):
+        try:
+            with ZipFile(self.path, 'r') as zip_file:
+                return zip_file.namelist()
+        except Exception as e:
+            print('bad zipfile {}: {} :: {}'.format(e, self.path, member),
+                  file=sys.stderr)
+            return []
