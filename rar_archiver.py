@@ -113,3 +113,35 @@ class RarArchiver:
             return False
         else:
             return True
+
+    def remove_member(self, member):
+        if not self.exe_path:
+            return False
+
+        try:
+            subprocess.call([self.exe_path,
+                             'd', '-c-',
+                             self.path, member],
+                            startupinfo=self.startupinfo,
+                            stdout=RarArchiver.devnull)
+            time.sleep(1) if platform.system() == 'Darwin'
+        except:
+            return False
+        else:
+            return True
+
+    def get_member_filename_list(self):
+        rarc = self.get_rar_obj()
+        for i in range(7):
+            try:
+                namelist = []
+                for item in rarc.infolist():
+                    if item.file_size != 0:
+                        namelist.append(item.filename)
+            except (OSError, IOError) as e:
+                print('get_member_filename_list(): [{}] {} attempt #{}'.format(
+                    e, self.path, tries), file=os.stderr)
+                time.sleep(1)
+            else:
+                return namelist
+        return e
