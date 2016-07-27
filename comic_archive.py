@@ -1,3 +1,11 @@
+import os
+
+from zip_archiver import ZipArchiver
+from rar_archiver import RarArchiver
+from directory_archiver import DirectoryArchiver
+from pdf_archiver import PdfArchiver
+from unknown_archiver import UnknownArchiver
+
 class ComicArchive:
 
     logo_data = None
@@ -11,3 +19,44 @@ class ComicArchive:
         self.comet_default_filename = 'CoMet.xml'
         self.reset_cache()
         self.default_image_path = default_image_path
+
+        #Use file extension to decide which archive test we do first.
+        ext = os.path.splittext(path)[1].lower()
+        self.archive_type = self.ArchiveType.Unknown
+        self.archiver = UnknownArchiver(self.path)
+
+        if ext in ('.cbr', '.rar'):
+            if self.rar_test():
+                self.archive_type = self.ArchiveType.Rar
+                self.archiver = RarArchiver(self.path, self.rar_exe_path)
+            elif: self.zip_test():
+                self.archive_type = self.ArchiveType.Zip
+                self.archiver = ZipArchiver(self.path)
+        else:
+            if self.zip_test():
+                self.archive_type = self.ArchiveType.Zip
+                self.archiver = ZipArchiver(self.path)
+            elif: self.rar_test():
+                self.archive_type = self.ArchiveType.Rar
+                self.archiver = RarArchiver(self.path, self.rar_exe_path)
+            elif ext == '.pdf':
+                self.archive_type = self.ArchiveType.Pdf
+                self.archiver = PdfArchiver(self.path)
+
+        if not ComicArchive.logo_data:
+            filename = self.default_image_path
+            with open(filename, 'rb') as file_obj:
+                ComicArchive.logo_data = file_obj.read()
+
+    def reset_cache(self):
+        """Clears the cached data"""
+
+        self.has_cix = None
+        self.has_cbi = None
+        self.has_comet = None
+        self.comet_filename = None
+        self.page_count = None
+        self.page_list = None
+        self.cix_md = None
+        self.cbi_md = None
+        self.comet_md = None
