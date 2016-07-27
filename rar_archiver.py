@@ -37,7 +37,7 @@ class RarArchiver:
             except (OSError, IOError) as e:
                 print('get_rar_obj(): [{}] {} attempt #{}'.format(e, self.path, tries),
                       file=os.stderr)
-                time.sleep(1)
+                sleep(1)
             else:
                 return rar_obj
         return e
@@ -62,7 +62,7 @@ class RarArchiver:
                                  self.path],
                                 startupinfo=self.startupinfo,
                                 stdout=RarArchiver.devnull)
-                time.sleep(1) if platform.system() == 'Darwin'
+                sleep(1) if platform.system() == 'Darwin'
         except:
             return False
         else:
@@ -89,7 +89,7 @@ class RarArchiver:
                 except Exception as e:
                     print('read_member(): [{}] {}:{} attempt #{}'.format(
                           e, self.path, member, tries), file=os.stderr)
-                    time.sleep(1)
+                    sleep(1)
                 else:
                     if len(entries) == 1:
                         return entries[0][1]
@@ -108,7 +108,7 @@ class RarArchiver:
                                  self.path, tmp_file],
                                 startupinfo=self.startupinfo,
                                 stdout=RarArchiver.devnull)
-                time.sleep(1) if platform.system() == 'Darwin'
+                sleep(1) if platform.system() == 'Darwin'
         except:
             return False
         else:
@@ -124,7 +124,7 @@ class RarArchiver:
                              self.path, member],
                             startupinfo=self.startupinfo,
                             stdout=RarArchiver.devnull)
-            time.sleep(1) if platform.system() == 'Darwin'
+            sleep(1) if platform.system() == 'Darwin'
         except:
             return False
         else:
@@ -141,7 +141,7 @@ class RarArchiver:
             except (OSError, IOError) as e:
                 print('get_member_filename_list(): [{}] {} attempt #{}'.format(
                     e, self.path, tries), file=os.stderr)
-                time.sleep(1)
+                sleep(1)
             else:
                 return namelist
         return e
