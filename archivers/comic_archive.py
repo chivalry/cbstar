@@ -1,5 +1,8 @@
 import os
 
+import zipfile
+import rarfile
+
 from zip_archiver import ZipArchiver
 from rar_archiver import RarArchiver
 from directory_archiver import DirectoryArchiver
@@ -60,3 +63,22 @@ class ComicArchive:
         self.cix_md = None
         self.cbi_md = None
         self.comet_md = None
+
+    def load_cache(self, style_list):
+        for style in style_list:
+            self.read_metadata(style)
+
+    def rename(self, path):
+        self.path = path
+        self.archiver.path = path
+
+    def zip_test(self):
+        return zipfile.is_zipfile(self.path)
+
+    def rar_test(self):
+        try:
+            rarc = rarfile.RarFile(self.path)
+        except: # INvalidRARArchive:
+            return False
+        else:
+            return True
